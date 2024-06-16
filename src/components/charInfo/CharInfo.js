@@ -6,14 +6,51 @@ import thor from "../../resources/img/thor.jpeg";
 class CharInfo extends Component {
   state = {
     char: {},
-    loading: true,
+    loading: false,
     error: false,
   };
 
   marvelService = new MarvelService();
 
+  /**
+   *  хук життевого циклу
+   */
+  componentDidMount() {
+    this.updateChar();
+  }
+
   updateChar = () => {
     const { charId } = this.props;
+    if (!charId) {
+      return;
+    }
+
+    this.onCharLoading();
+
+    this.marvelService
+      .getCharacter(charId)
+      .then(this.onCharLoaded)
+      .catch(this.onError);
+  };
+
+  onCharLoaded = (char) => {
+    this.setState({
+      char,
+      loading: false,
+    });
+  };
+
+  onCharLoading = () => {
+    this.setState({
+      loading: true,
+    });
+  };
+
+  onError = () => {
+    this.setState({
+      loading: false,
+      error: true,
+    });
   };
 
   render() {

@@ -13,6 +13,9 @@ class CharList extends Component {
 
   marvelService = new MarvelService();
 
+  /**
+   * @returns хук життевого циклу
+   */
   componentDidMount() {
     this.marvelService
       .getAllCharacters()
