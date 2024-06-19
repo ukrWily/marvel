@@ -105,11 +105,13 @@ const View = ({ char }) => {
       <div className="char__comics">Comics:</div>
       <ul className="char__comics-list">
         {comics.map((item, i) => {
-          return (
-            <li key={i} className="char__comics-item">
-              {item.name}
-            </li>
-          );
+          if (i < 10) {
+            return (
+              <li key={i} className="char__comics-item">
+                {item.name}
+              </li>
+            );
+          }
         })}
       </ul>
     </>
