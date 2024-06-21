@@ -85,10 +85,13 @@ class CharInfo extends Component {
 
 const View = ({ char }) => {
   const { name, description, thumbnail, homepage, Wiki, comics } = char;
+  let imgStyle = thumbnail.includes("not_available")
+    ? { objectFit: "contain" }
+    : {};
   return (
     <>
       <div className="char__basics">
-        <img src={thumbnail} alt={name} />
+        <img src={thumbnail} alt={name} style={imgStyle} />
         <div>
           <div className="char__info-name">{name}</div>
           <div className="char__btns">
@@ -104,6 +107,7 @@ const View = ({ char }) => {
       <div className="char__descr">{description}</div>
       <div className="char__comics">Comics:</div>
       <ul className="char__comics-list">
+        {comics.length > 0 ? null : "No comics available"}
         {comics.map((item, i) => {
           if (i < 10) {
             return (
