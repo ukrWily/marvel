@@ -89,4 +89,7 @@
         transform: translateY(-5px);
         filter: invert(5);
     }
+    &:disabled{
+        filter: grayscale(.5);
+    }
 }
