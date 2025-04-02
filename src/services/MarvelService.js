@@ -1,48 +1,56 @@
-class MarvelService {
-  _apiBase = "https://gateway.marvel.com:443/v1/public/";
-  // ЗДЕСЬ БУДЕТ ВАШ КЛЮЧ, ЭТОТ КЛЮЧ МОЖЕТ НЕ РАБОТАТЬ
-  _apiKey = "apikey=c378525808b888c20f7a8738851c9a68";
-  _baseOffset = 0;
+import { useHttp } from "../hooks/http.hook";
 
-  getResource = async (url) => {
-    let res = await fetch(url);
+// Кастомний хук для роботи з API Marvel
+const useMarvelService = () => {
+  // Використовуємо кастомний хук useHttp для виконання HTTP-запитів
+  const { loading, request, error, clearError } = useHttp();
+  // Базовий URL для API Marvel
+  const _apiBase = "https://gateway.marvel.com:443/v1/public/";
+  // Ваш API-ключ для доступу до Marvel API (цей ключ може бути неактивним)
+  const _apiKey = "apikey=c378525808b888c20f7a8738851c9a68";
+  // Базове значення offset для пагінації
+  const _baseOffset = 210;
 
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-    }
-
-    return await res.json();
-  };
-
-  getAllCharacters = async (offset = this._baseOffset) => {
-    const res = await this.getResource(
-      `${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`
+  // Функція для отримання списку всіх персонажів з API
+  const getAllCharacters = async (offset = _baseOffset) => {
+    // Виконуємо запит до API з вказаним offset
+    const res = await request(
+      `${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`
     );
-    return res.data.results.map(this._transformCharacter);
+    // Повертаємо трансформовані дані персонажів
+    return res.data.results.map(_transformCharacter);
   };
 
-  getCharacter = async (id) => {
-    const res = await this.getResource(
-      `${this._apiBase}characters/${id}?${this._apiKey}`
-    );
-    return this._transformCharacter(res.data.results[0]);
+  // Функція для отримання даних конкретного персонажа за його ID
+  const getCharacter = async (id) => {
+    // Виконуємо запит до API для отримання даних персонажа
+    const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
+    // Повертаємо трансформовані дані персонажа
+    return _transformCharacter(res.data.results[0]);
   };
 
-  _transformCharacter = (char) => {
+  // Приватна функція для трансформації даних персонажа у зручний формат
+  const _transformCharacter = (char) => {
     return {
-      id: char.id,
-      name: char.name,
+      id: char.id, // ID персонажа
+      name: char.name, // Ім'я персонажа
       description: char.description
-        ? `${char.description.slice(0, 210)}...`
-        : "There is no description for this character",
-      thumbnail: char.thumbnail.path + "." + char.thumbnail.extension,
-      homepage: char.urls[0].url,
-      wiki: char.urls[1].url,
-      comics: char.comics.items,
+        ? `${char.description.slice(0, 210)}...` // Обрізаємо опис до 210 символів
+        : "There is no description for this character", // Якщо опису немає, повертаємо повідомлення
+      thumbnail: char.thumbnail.path + "." + char.thumbnail.extension, // URL до зображення персонажа
+      homepage: char.urls[0].url, // Посилання на домашню сторінку персонажа
+      wiki: char.urls[1].url, // Посилання на сторінку персонажа у Wiki
+      comics: char.comics.items, // Список коміксів, у яких з'являється персонаж
     };
   };
-}
 
-export default MarvelService;
+  // Повертаємо об'єкт із станами та функціями для роботи з API
+  return {
+    loading, // Стан завантаження
+    error, // Стан помилки
+    getAllCharacters, // Функція для отримання всіх персонажів
+    getCharacter, // Функція для отримання конкретного персонажа
+  };
+};
 
-// apikey = c378525808b888c20f7a8738851c9a68;
+export default useMarvelService; // Експортуємо хук для використання в інших компонентах

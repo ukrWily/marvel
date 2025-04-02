@@ -8,10 +8,10 @@ import ErrorBoundary from "../errorBoundary/ErrorBoundary";
 import decoration from "../../resources/img/vision.png";
 
 const App = () => {
-  const [selectedChar, setSelectedChar] = useState(null);
+  const [selectedChar, setChar] = useState(null);
 
   const onCharSelected = (id) => {
-    setSelectedChar(id);
+    setChar(id);
   };
 
   return (
@@ -25,9 +25,9 @@ const App = () => {
           <ErrorBoundary>
             <CharList onCharSelected={onCharSelected} />
           </ErrorBoundary>
-          <ErrorBoundary>
-            <CharInfo charId={selectedChar} />
-          </ErrorBoundary>
+          {/* <ErrorBoundary>
+                        <CharInfo charId={selectedChar}/>
+                    </ErrorBoundary> */}
         </div>
         <img className="bg-decoration" src={decoration} alt="vision" />
       </main>
